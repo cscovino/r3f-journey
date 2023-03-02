@@ -9,5 +9,17 @@ body,
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background: lightskyblue;
+  /* background: lightskyblue; */
+}
+
+.label > div {
+  font-family: Arial, Helvetica, sans-serif;
+  position: absolute;
+  background: #00000088;
+  color: white;
+  padding: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  border-radius: 30px;
+  user-select: none;
 }
