@@ -1,108 +1,63 @@
-import { OrbitControls } from '@react-three/drei';
 import {
-  EffectComposer,
-  // Vignette,
-  // Glitch,
-  // Noise,
-  // Bloom,
-  // DepthOfField,
-  // SSR,
-} from '@react-three/postprocessing';
-import { useControls } from 'leva';
-import {
-  BlendFunction,
-  // GlitchMode
-} from 'postprocessing';
-import { Perf } from 'r3f-perf';
-import { useRef } from 'react';
-import Drunk from './Drunk';
-import DrunkEffect from './DrunkEffect';
-// import { Vector2 } from 'three';
+  ContactShadows,
+  Environment,
+  Float,
+  Html,
+  PresentationControls,
+  Text,
+  useGLTF,
+} from '@react-three/drei';
 
 export default function Experience() {
-  const drunkRef = useRef<DrunkEffect>(null);
-  const drunkProps = useControls('Drunk Effect', {
-    frequency: { value: 2, min: 1, max: 20 },
-    amplitude: { value: 0.1, min: 0, max: 1 },
-  });
-  // const ssrProps = useControls({
-  //   temporalResolve: true,
-  //   STRETCH_MISSED_RAYS: true,
-  //   USE_MRT: true,
-  //   USE_NORMALMAP: true,
-  //   USE_ROUGHNESSMAP: true,
-  //   ENABLE_JITTERING: true,
-  //   ENABLE_BLUR: true,
-  //   temporalResolveMix: { value: 0.9, min: 0, max: 1 },
-  //   temporalResolveCorrectionMix: { value: 0.25, min: 0, max: 1 },
-  //   maxSamples: { value: 0, min: 0, max: 1 },
-  //   resolutionScale: { value: 1, min: 0, max: 1 },
-  //   blurMix: { value: 0.5, min: 0, max: 1 },
-  //   blurKernelSize: { value: 8, min: 0, max: 8 },
-  //   blurSharpness: { value: 0.5, min: 0, max: 1 },
-  //   rayStep: { value: 0.3, min: 0, max: 1 },
-  //   intensity: { value: 1, min: 0, max: 5 },
-  //   maxRoughness: { value: 0.1, min: 0, max: 1 },
-  //   jitter: { value: 0.7, min: 0, max: 5 },
-  //   jitterSpread: { value: 0.45, min: 0, max: 1 },
-  //   jitterRough: { value: 0.1, min: 0, max: 1 },
-  //   roughnessFadeOut: { value: 1, min: 0, max: 1 },
-  //   rayFadeOut: { value: 0, min: 0, max: 1 },
-  //   MAX_STEPS: { value: 20, min: 0, max: 20 },
-  //   NUM_BINARY_SEARCH_STEPS: { value: 5, min: 0, max: 10 },
-  //   maxDepthDifference: { value: 3, min: 0, max: 10 },
-  //   maxDepth: { value: 1, min: 0, max: 1 },
-  //   thickness: { value: 10, min: 0, max: 10 },
-  //   ior: { value: 1.45, min: 0, max: 2 },
-  // });
+  const computer = useGLTF('./model.gltf');
 
   return (
     <>
-      <color args={['#ffffff']} attach="background" />
+      <Environment preset="city" />
 
-      <EffectComposer>
-        {/* <Vignette offset={0.3} darkness={0.9} blendFunction={BlendFunction.NORMAL} /> */}
-        {/* <Glitch */}
-        {/*   delay={new Vector2(0.5, 1)} */}
-        {/*   duration={new Vector2(0.1, 0.3)} */}
-        {/*   strength={new Vector2(0.02, 0.04)} */}
-        {/*   mode={GlitchMode.CONSTANT_WILD} */}
-        {/* /> */}
-        {/* <Noise premultiply blendFunction={BlendFunction.SOFT_LIGHT} /> */}
-        {/* <Bloom mipmapBlur intensity={0.1} luminanceThreshold={0} /> */}
-        {/* <DepthOfField focusDistance={0.025} focalLength={0.025} bokehScale={6} /> */}
-        {/* <SSR {...ssrProps} /> */}
-        <Drunk ref={drunkRef} {...drunkProps} blendFunction={BlendFunction.DARKEN} />
-      </EffectComposer>
+      <color args={['#241a1a']} attach="background" />
 
-      <Perf position="top-left" />
+      <PresentationControls
+        global
+        rotation={[0.13, 0.1, 0]}
+        polar={[-0.4, 0.2]}
+        azimuth={[-1, 0.75]}
+        config={{ mass: 2, tension: 400 }}
+        snap={{ mass: 4, tension: 400 }}
+      >
+        <Float rotationIntensity={0.4}>
+          <rectAreaLight
+            width={2.5}
+            height={1.65}
+            intensity={65}
+            color="#ff6900"
+            rotation={[-0.1, Math.PI, 0]}
+            position={[0, 0.55, -1.15]}
+          />
+          <primitive object={computer.scene} position-y={-1.2}>
+            <Html
+              transform
+              wrapperClass="htmlScreen"
+              distanceFactor={1.17}
+              position={[0, 1.56, -1.4]}
+              rotation-x={-0.256}
+            >
+              <iframe src="https://bruno-simon.com/html" />
+            </Html>
+          </primitive>
+          <Text
+            font="./fonts/bangers-v20-latin-regular.woff"
+            fontSize={1}
+            position={[2, 0.75, 0.75]}
+            rotation-y={-1.25}
+            maxWidth={2}
+          >
+            BRUNO SIMON
+          </Text>
+        </Float>
+      </PresentationControls>
 
-      <OrbitControls makeDefault />
-
-      <directionalLight castShadow position={[1, 2, 3]} intensity={1.5} />
-      <ambientLight intensity={0.5} />
-
-      <mesh castShadow position-x={-2}>
-        <sphereGeometry />
-        <meshStandardMaterial color="orange" />
-      </mesh>
-
-      <mesh castShadow position-x={2} scale={1.5}>
-        <boxGeometry />
-        <meshBasicMaterial color="mediumpurple" />
-        {/* <meshStandardMaterial */}
-        {/*   color="orange" */}
-        {/*   emissive="orange" */}
-        {/*   emissiveIntensity={2} */}
-        {/*   toneMapped={false} */}
-        {/* /> */}
-        {/* <meshBasicMaterial color={[1.5, 1, 4]} toneMapped={false} /> */}
-      </mesh>
-
-      <mesh receiveShadow position-y={-1} rotation-x={-Math.PI * 0.5} scale={10}>
-        <planeGeometry />
-        <meshStandardMaterial color="greenyellow" metalness={0} roughness={0} />
-      </mesh>
+      <ContactShadows position={-1.4} opacity={0.4} scale={5} blur={2.4} />
     </>
   );
 }
